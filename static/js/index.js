@@ -70,7 +70,7 @@ var showAuthor = {
   },
   authorIdFromClass: function(className){
     if (className.substring(0, 7) == "author-") {
-      //className = className.substring(0,49);
+      className = className.substring(0,49);
       return className.substring(7).replace(/[a-y0-9]+|-|z.+?z/g, function(cc) {
         if (cc == '-') { return '.'; }
         else if (cc.charAt(0) == 'z') {
@@ -112,7 +112,12 @@ var showAuthor = {
 
     // Else go historical
     if(!authorObj || !authorObj.name){
-      var authorObj = clientVars.collab_client_vars.historicalAuthorData[fullAuthorId]; // Try to use historical data
+      var historicalData = clientVars.collab_client_vars.historicalAuthorData;
+      for (var author in historicalData) {
+        if (authorId === author.substring(0, 14)) {
+          var authorObj = historicalData[author]; // Try to use historical data
+        }
+      }
     }
 
     return authorObj || {name: window._('ep_author_hover.unknow_author'), color: "#fff"};
