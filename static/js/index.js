@@ -48,13 +48,13 @@ var showAuthor = {
     }, 'showAuthor', true);
   },
   hover: function(span){
-    if(timer) { // wait a second before showing!
+    if(timer) { // wait half a second before showing!
       clearTimeout(timer);
       timer = null;
     }
     timer = setTimeout(function(){
       showAuthor.show(span);
-    }, 1000);
+    }, 500);
 
   },
   show: function(span){
@@ -83,6 +83,7 @@ var showAuthor = {
     }
   },
   authorNameAndColorFromAuthorId: function(authorId){
+    var offWhite = "#f3f6f9";
     var fullAuthorId = authorId; // historical data uses full author id without substing
     // todo figure out why we need a substring to fix this
     authorId = authorId.substring(0,14); // don't ask....  something appears to be fucked in regex
@@ -91,7 +92,7 @@ var showAuthor = {
     if(myAuthorId == authorId){
       return {
         name: window._('ep_author_hover.me'),
-        color: "#fff"
+        color: offWhite
       }
     }
 
@@ -104,7 +105,7 @@ var showAuthor = {
           if(authorObj.name == "") authorObj.name = window._('ep_author_hover.unknow_author');
         });
         $(this).find('.usertdswatch > div').each( function() {
-          authorObj.color = $(this).css("background-color");
+          authorObj.color = offWhite;
         });
         return authorObj;
       }
@@ -115,12 +116,14 @@ var showAuthor = {
       var historicalData = clientVars.collab_client_vars.historicalAuthorData;
       for (var author in historicalData) {
         if (authorId === author.substring(0, 14)) {
-          var authorObj = historicalData[author]; // Try to use historical data
+          authorObj.name = historicalData[author].name;
+          authorObj.color = offWhite;
+          break;
         }
       }
     }
 
-    return authorObj || {name: window._('ep_author_hover.unknow_author'), color: "#fff"};
+    return authorObj || {name: window._('ep_author_hover.unknow_author'), color: offWhite};
   },
   draw: function(target, authorName, authorColor){
     if(!authorName){
@@ -145,9 +148,10 @@ var showAuthor = {
       class: 'authortooltip',
       title: authorName,
     }).css({
-      "opacity": ".8",
+      "opacity": "1",
+      "box-sizing": "border-box",
       "font-size": "14px",
-      "padding": "5px 5px 0px 5px",
+      "padding": "5px",
       "position": "absolute",
       "left": left + "px",
       "top": top + "px",
@@ -161,7 +165,7 @@ var showAuthor = {
       $indicator.fadeOut(500, function(){
         $indicator.remove();
       });
-    }, 700);
+    }, 1000);
   },
   destroy: function(){
     $('iframe[name="ace_outer"]').contents().find(".authortooltip").remove();
